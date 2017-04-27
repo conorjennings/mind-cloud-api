@@ -1,9 +1,9 @@
-class IdeasController < ApplicationController
+class IdeasController < ProtectedController
   before_action :set_idea, only: [:show, :update, :destroy]
 
   # GET /ideas
   def index
-    @ideas = Idea.all
+    @ideas = current_user.ideas
 
     render json: @ideas
   end
@@ -15,7 +15,7 @@ class IdeasController < ApplicationController
 
   # POST /ideas
   def create
-    @idea = Idea.new(idea_params)
+    @idea = current_user.ideas.build(idea_params)
 
     if @idea.save
       render json: @idea, status: :created, location: @idea
@@ -27,7 +27,7 @@ class IdeasController < ApplicationController
   # PATCH/PUT /ideas/1
   def update
     if @idea.update(idea_params)
-      render json: @idea
+      head :no_content
     else
       render json: @idea.errors, status: :unprocessable_entity
     end
@@ -36,6 +36,8 @@ class IdeasController < ApplicationController
   # DELETE /ideas/1
   def destroy
     @idea.destroy
+
+    head :no_content
   end
 
   private
