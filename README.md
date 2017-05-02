@@ -1,10 +1,6 @@
 [![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
 
-# rails-api-template
-
-A template for starting projects with `rails-api`. Includes authentication.
-
-At the beginning of each cohort, update the versions in [`Gemfile`](Gemfile).
+# mindCloud Client API
 
 ## Dependencies
 
@@ -16,69 +12,12 @@ Install with `bundle install`.
 -   [`ruby`](https://www.ruby-lang.org/en/)
 -   [`postgres`](http://www.postgresql.org)
 
-Until Rails 5 is released, this template should follow the most recent released
-version of Rails 4, as well as track `master` branches for `rails-api` and
-`active_model_serializers`.
-
-## Installation
-
-1.  [Download](../../archive/master.zip) this template.
-1.  Unzip and rename the template directory.
-1.  Empty [`README.md`](README.md) and fill with your own content.
-1.  Move into the new project and `git init`.
-1.  Install dependencies with `bundle install`.
-1.  Rename your app module in `config/application.rb` (change
-    `RailsApiTemplate`).
-1.  Rename your project database in `config/database.yml` (change
-    `'rails-api-template'`).
-1.  Create a `.env` for sensitive settings (`touch .env`).
-1.  Generate new `development` and `test` secrets (`bundle exec rake secret`).
-1.  Store them in `.env` with keys `SECRET_KEY_BASE_<DEVELOPMENT|TEST>`
-    respectively.
-1.  In order to make requests to your deployed API, you will need to set
-    `SECRET_KEY_BASE` in the environment of the production API (using `heroku
-    config:set` or the Heroku dashboard).
-1.  In order to make requests from your deployed client application, you will
-    need to set `CLIENT_ORIGIN` in the environment of the production API (e.g.
-    `heroku config:set CLIENT_ORIGIN https://<github-username>.github.io`).
-1.  Setup your database with `bin/rake db:nuke_pave` or `bundle exec rake
-    db:nuke_pave`.
-1.  Run the API server with `bin/rails server` or `bundle exec rails server`.
-
-## Structure
-
-This template follows the standard project structure in Rails 4.
-
-`curl` command scripts are stored in [`scripts`](scripts) with names that
-correspond to API actions.
-
-User authentication is built-in.
-
-## Tasks
-
-Developers should run these often!
-
--   `bin/rake routes` lists the endpoints available in your API.
--   `bin/rake test` runs automated tests.
--   `bin/rails console` opens a REPL that pre-loads the API.
--   `bin/rails db` opens your database client and loads the correct database.
--   `bin/rails server` starts the API.
--   `scripts/*.sh` run various `curl` commands to test the API. See below.
-
-<!-- TODO -   `rake nag` checks your code style. -->
-<!-- TODO -   `rake lint` checks your code for syntax errors. -->
 
 ## API
 
-Use this as the basis for your own API documentation. Add a new third-level
-heading for your custom entities, and follow the pattern provided for the
-built-in user authentication documentation.
+This API manages the brilliant ideas of mindCloud users. A user can create new ideas and edit/delete existing ideas when authenticated. A user has can view only their own ideas.
 
-Scripts are included in [`scripts`](scripts) to test built-in actions. Add your
-own scripts to test your custom API. As an alternative, you can write automated
-tests in RSpec to test your API.
-
-### Authentication
+### API end-points
 
 | Verb   | URI Pattern            | Controller#Action |
 |--------|------------------------|-------------------|
@@ -86,6 +25,15 @@ tests in RSpec to test your API.
 | POST   | `/sign-in`             | `users#signin`    |
 | PATCH  | `/change-password/:id` | `users#changepw`  |
 | DELETE | `/sign-out/:id`        | `users#signout`   |
+| GET    | `/ideas`               | `ideas#index`     |
+| GET    | `/ideas/:id`           | `ideas#show`      |
+| POST   | `/ideas`               | `ideas#create`    |
+| PATCH  | `/ideas/:id`           | `ideas#update`    |
+| DELETE | `/ideas/:id`           | `ideas#destroy`   |
+
+All data returned from API actions is formatted as JSON.
+
+### User Actions
 
 #### POST /sign-up
 
@@ -274,23 +222,175 @@ Content-Type: application/json; charset=utf-8
   }
 }
 ```
+### User Actions
 
-### Reset Database without dropping
+#### index /ideas
 
-This is not a task developers should run often, but it is sometimes necessary.
+The index action is a GET that retrieves all the ideas associated with a user. The response body will contain JSON containing an array of ideas, e.g.:
 
-**locally**
+
+
+Request:
 
 ```sh
-bin/rake db:migrate VERSION=0
-bin/rake db:migrate db:seed db:examples
+API="${API_ORIGIN:-http://localhost:4741}"
+URL_PATH="/ideas"
+curl "${API}${URL_PATH}" \
+  --include \
+  --request GET \
+  --header "Authorization: Token token=$TOKEN"
 ```
 
-**heroku**
+```sh
+TOKEN=BAhJIiUzNmYyNDQyM2FiMGIxMTk2MTY1Y2VmYjU5M2FiYTkwMwY6BkVG--df55f3a3e0d68241efef889ede652908d2fad60e sh scripts/ideas/get-ideas.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+{
+  "ideas": [
+  {
+    "id": 1,
+    "content": "this is a test"
+  }
+  {
+    "id": 2,
+    "content": "another idea"
+  }
+ ]
+}
+```
+#### show /ideas/:id
+
+The show action is a GET specifing the id of the idea to retrieve. If the request is successful the status will be 200, OK, and the response body will contain JSON for the idea requested.
+
+Request:
 
 ```sh
-heroku run rake db:migrate VERSION=0
-heroku run rake db:migrate db:seed db:examples
+API="${API_ORIGIN:-http://localhost:4741}"
+URL_PATH="/ideas/$ID"
+curl "${API}${URL_PATH}" \
+  --include \
+  --request GET \
+  --header "Authorization: Token token=$TOKEN" \
+  --header "Content-Type: application/json"
+```
+
+```sh
+ID=2 TOKEN=BAhJIiVlODkyNTczNzYzYmVkN2RmOWNlYWM1MjAyZDhmMDI2NgY6BkVG--23303c36d71984539b1c7c76dd96acaeb37c437c sh scripts/ideas/get-idea.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "idea": {
+    "id": 2,
+    "content": "this is a specific idea"
+  }
+}
+```
+#### create /ideas
+
+The create action expects a POST with an empty body (e.g '' or '{}' if JSON). If the request is successful, the response will have an HTTP Status of 201 Created, and the body will contain JSON of the created idea set to the associated user.
+
+Request:
+
+```sh
+API="${API_ORIGIN:-http://localhost:4741}"
+URL_PATH="/ideas"
+curl "${API}${URL_PATH}" \
+  --include \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Token token=$TOKEN" \
+  --data '{
+    "idea": {
+      "content": "'"${TEXT}"'"
+    }
+  }'
+```
+
+```sh
+TOKEN=BAhJIiVmZjZmYTY1MWI3ODRmOTlkZGNmYTMyMTI0YTU0OWU5ZAY6BkVG--5e86cb79e6fe263cf0da4444bd0006774da82509 TEXT='here is idea 1' sh scripts/ideas/create-idea.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+{
+  "idea": {
+    "id": 1,
+    "content": "here is idea 1"
+  }
+}
+```
+#### update /ideas/:id
+
+This update action expects an empty (e.g '' or '{}' if JSON) PATCH to an existing idea.
+
+If the request is successful, the response will have an HTTP Status of 200 OK, and the body will be JSON containing the updated idea.
+
+Request:
+
+```sh
+API="${API_ORIGIN:-http://localhost:4741}"
+URL_PATH="/ideas/$ID"
+curl "${API}${URL_PATH}" \
+  --include \
+  --request PATCH \
+  --header "Authorization: Token token=$TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "idea": {
+      "content": "'"${CONTENT}"'"
+    }
+  }'
+```
+
+```sh
+ID=2 CONTENT='this is changed content' TOKEN=BAhJIiVlODkyNTczNzYzYmVkN2RmOWNlYWM1MjAyZDhmMDI2NgY6BkVG--23303c36d71984539b1c7c76dd96acaeb37c437c sh scripts/ideas/update-idea.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
+```
+#### destroy /ideas/:id
+
+The destroy action is a DELETE request specifing the id of the idea to delete. If the request is successful the status will be 204 No Content.
+
+Request:
+
+```sh
+API="${API_ORIGIN:-http://localhost:4741}"
+URL_PATH="/ideas/$ID"
+curl "${API}${URL_PATH}" \
+  --include \
+  --request DELETE \
+  --header "Authorization: Token token=$TOKEN" \
+  --header "Content-Type: application/json"
+```
+
+```sh
+ID=92 TOKEN=BAhJIiVkZTcxZTlkZjBjYTFhMjhiMTBkYjg0ZTIwY2E1NGQ3ZgY6BkVG--66e2d042d22a20ed98cd20119112ea8e92bdb102 sh scripts/ideas/delete-idea.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
 ```
 
 ## [License](LICENSE)
