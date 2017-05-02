@@ -2,6 +2,8 @@
 
 # mindCloud Client API
 
+Find the repo for the mindCloud front end client [here](https://github.com/danielleletarte/mind-cloud-client).
+
 ## Dependencies
 
 Install with `bundle install`.
