@@ -4,6 +4,8 @@
 
 Find the repo for the mindCloud front end client [here](https://github.com/danielleletarte/mind-cloud-client).
 
+Find the deployed mindCloud front end client [here](https://danielleletarte.github.io/mind-cloud-client/).
+
 ## Dependencies
 
 Install with `bundle install`.
