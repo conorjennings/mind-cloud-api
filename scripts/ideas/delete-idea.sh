@@ -1,6 +1,6 @@
 #!/bin/bash
-#ID=97 TOKEN=BAhJIiUxMTMwZjU1M2Q1M2E0YjhiMzdiYjE2YTU4MjJmNzk5YQY6BkVG--1dc3eaa1e1dd3cea08e2d7af13ee40d9186f41fc sh scripts/ideas/delete-idea.sh
-
+ID=13
+TOKEN="BAhJIiVkZWQzZmIwZGJiNWY2YThhYmM4OTZiZWM1NTVmMzlmZgY6BkVG--1ebb1489a8ef0365a3950030149a5294cfed4371"
 API="${API_ORIGIN:-http://localhost:4741}"
 URL_PATH="/ideas/$ID"
 curl "${API}${URL_PATH}" \

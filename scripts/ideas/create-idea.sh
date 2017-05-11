@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#TOKEN='BAhJIiVhM2VhZDUzNWM4YzEzOTkxMzY1NWYyYjFiNTk5NTM4MQY6BkVG--404255de9d79fe1d99d8f2103d7311d57006a6c7' TEXT='test ability to delete' sh scripts/ideas/create-idea.sh
+#TOKEN='BAhJIiVhNDcyOTg0MDk5Nzg2MjE2ZGNjZTYwZGQwYWM2ZDYzMAY6BkVG--88322dbfdc09bcc31411fca0cf6f094f00f318f9' TEXT='' sh scripts/ideas/create-idea.sh
 
 API="${API_ORIGIN:-http://localhost:4741}"
 URL_PATH="/ideas"

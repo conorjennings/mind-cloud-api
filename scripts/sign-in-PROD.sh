@@ -1,5 +1,7 @@
 #!/bin/bash
-#EMAIL=me@me PASSWORD=me sh scripts/sign-in-PROD.sh
+
+EMAIL=me@me
+PASSWORD=me
 
 API="https://mind-cloud.herokuapp.com"
 URL_PATH="/sign-in"

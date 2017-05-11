@@ -1,4 +1,5 @@
 #!/bin/bash
+#EMAIL=pb PASSWORD=pb sh scripts/sign-in.sh
 
 API="${API_ORIGIN:-http://localhost:4741}"
 URL_PATH="/sign-in"
